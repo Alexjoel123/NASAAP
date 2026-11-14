@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earth Jukebox | NASA SVS 5196 (3D GLTF & Sonificación)</title>
+    <!-- Google Fonts: Inter, Orbitron & Roboto Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@600;800;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Three.js CDN y GLTFLoader moderno -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    
+    <!-- Tone.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ====================================================================
+         SELECTOR DE IDIOMA FLOTANTE GLOBAL (Fixed Top-Right)
+         ==================================================================== -->
+    <div id="language-toggle" role="group" aria-label="Selector de Idioma / Language Selector">
+        <button class="lang-btn active" data-lang="es" aria-label="Cambiar a Español">ES</button>
+        <span class="lang-separator">/</span>
+        <button class="lang-btn" data-lang="en" aria-label="Switch to English">EN</button>
+    </div>
+
+    <!-- ====================================================================
+         SECCIÓN 1: HERO LANDING 3D (Modelo GLTF de la Tierra & Resumen)
+         ==================================================================== -->
+    <section id="hero" class="full-screen" aria-label="Introducción al Proyecto Earth Jukebox">
+        
+        <!-- Contenedor 3D del Hero -->
+        <div id="hero-3d"></div>
+
+        <!-- Indicador de carga para el modelo GLB -->
+        <div id="glb-loading-badge" class="glb-loader">
+            <span class="loader-spinner"></span>
+            <span id="glb-loader-text">Cargando Modelo 3D de la Tierra...</span>
+        </div>
+
+        <!-- Gradiente atmosférico sutil -->
+        <div class="hero-overlay-gradient"></div>
+
+        <!-- Contenedor Flotante de Información (z-index: 10) -->
+        <div class="hero-content-container">
+            <div class="hero-glass-card">
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    <span data-i18n="hero_badge">Desafío NASA Space Apps 2026</span>
+                </div>
+
+                <h1 class="hero-title" data-i18n="hero_title">Earth Jukebox</h1>
+                <p class="hero-subtitle" data-i18n="hero_subtitle">Sonificación de Datos Planetarios en Tiempo Real (SVS 5196)</p>
+
+                <p class="hero-summary" data-i18n="hero_summary">
+                    Transformando la ciencia visual en una experiencia auditiva. El Centro de Información de la Tierra (EIC) rastrea nuestro planeta mediante visualizaciones. Este proyecto traduce esos datos en sonido en tiempo real, creando un entorno multisensorial accesible para usuarios ciegos y con baja visión, conectando el impacto climático a través de acordes y ritmos.
+                </p>
+
+                <div class="hero-actions">
+                    <button id="btn-scroll-down" class="btn-cyan-hero glow-pulse">
+                        <span data-i18n="hero_btn_sonification">Iniciar Sonificación</span>
+                        <svg class="hero-arrow-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                        </svg>
+                    </button>
+                    <div class="hero-tag-pills">
+                        <span class="pill-tag">Earth Information Center (EIC)</span>
+                        <span class="pill-tag">Three.js GLTF Engine</span>
+                        <span class="pill-tag">WCAG AAA Accessible</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Indicador animado de scroll hacia la sección informativa -->
+            <a href="#about-project" class="scroll-down-indicator" aria-label="Bajar a la información del proyecto">
+                <span class="mouse-icon">
+                    <span class="mouse-wheel"></span>
+                </span>
+                <span class="scroll-text" data-i18n="hero_scroll_prompt">Explora la Sonificación</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ====================================================================
+         SECCIÓN INTERMEDIA: SOBRE EL PROYECTO (#about-project)
+         Contexto del Desafío NASA, Accesibilidad y Traducción Espectral
+         ==================================================================== -->
+    <section id="about-project" class="about-section" aria-label="Contexto del Desafío y Arquitectura del Proyecto">
+        <div class="about-container">
+            
+            <!-- Encabezado de la Sección -->
+            <div class="about-header">
+                <span class="about-pretitle" data-i18n="about_pretitle">DESAFÍO NASA SPACE APPS 2026</span>
+                <h2 class="about-title" data-i18n="about_title">El Arte y la Ciencia de Escuchar Nuestro Planeta</h2>
+                <p class="about-lead" data-i18n="about_lead">
+                    Una experiencia multisensorial diseñada para transformar observaciones satelitales complejas del Centro de Información de la Tierra (EIC) en composiciones acústicas accesibles y significativas.
+                </p>
+            </div>
+
+            <!-- Cuadrícula Responsiva de 3 Tarjetas (Cards) -->
+            <div class="about-cards-grid">
+                
+                <!-- Tarjeta 1: El Problema (Antecedentes) -->
+                <article class="about-card glassmorphism-card">
+                    <div class="card-icon-box">
+                        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        </svg>
+                    </div>
+                    <span class="card-category" data-i18n="card1_category">01 · ANTECEDENTES</span>
+                    <h3 class="card-title" data-i18n="card1_title">El Problema</h3>
+                    <p class="card-description" data-i18n="card1_desc">
+                        Tradicionalmente, las ciencias de la Tierra han dependido casi en su totalidad de la vista. Esta barrera visual limita la accesibilidad universal para personas ciegas o con baja visión y restringe la comprensión pública de dinámicas climáticas complejas. La sonificación cierra esta brecha, democratizando el acceso a los datos de la NASA mediante la audición.
+                    </p>
+                    <div class="card-footer-pill">
+                        <span data-i18n="card1_pill">Barrera Visual ➔ Inclusión Sonora</span>
+                    </div>
+                </article>
+
+                <!-- Tarjeta 2: El Objetivo (Jukebox) -->
+                <article class="about-card glassmorphism-card highlight-card">
+                    <div class="card-icon-box">
+                        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                        </svg>
+                    </div>
+                    <span class="card-category" data-i18n="card2_category">02 · JUKEBOX CONCEPT</span>
+                    <h3 class="card-title" data-i18n="card2_title">El Objetivo</h3>
+                    <p class="card-description" data-i18n="card2_desc">
+                        Crear una experiencia inmersiva e interactiva donde los usuarios exploren diferentes visualizaciones globales del Earth Information Center (EIC). Al activar el escaneo o interactuar con las capas terrestres, el sistema genera paisajes sonoros dinámicos en tiempo real, transformando el monitoreo satelital en un instrumento musical vivo.
+                    </p>
+                    <div class="card-footer-pill">
+                        <span data-i18n="card2_pill">Exploración Interactiva EIC</span>
+                    </div>
+                </article>
+
+                <!-- Tarjeta 3: La Traducción (Datos a Audio) -->
+                <article class="about-card glassmorphism-card">
+                    <div class="card-icon-box">
+                        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                    </div>
+                    <span class="card-category" data-i18n="card3_category">03 · ALGORITMO SÓNICO</span>
+                    <h3 class="card-title" data-i18n="card3_title">La Traducción</h3>
+                    <p class="card-description" data-i18n="card3_desc">
+                        Mapeo algorítmico riguroso de elementos visuales a parámetros musicales: las tonalidades frías (océanos) generan notas graves de soporte, mientras las plumas cálidas de CO2 y la reflectancia abren filtros armónicos agudos. La luminancia y densidad modulan volumen y ritmo, preservando el equilibrio entre fidelidad científica y belleza acústica.
+                    </p>
+                    <div class="card-footer-pill">
+                        <span data-i18n="card3_pill">Píxel RGB ➔ Frecuencia & Armónicos</span>
+                    </div>
+                </article>
+
+            </div>
+
+            <!-- Botón de Navegación Continua hacia la Consola de Audio -->
+            <div class="about-action-row">
+                <a href="#jukebox-section" class="btn-cyan-about glow-pulse-cyan" aria-label="Desplazarse a la Consola de Audio de Earth Jukebox">
+                    <span data-i18n="about_btn_access">Acceder a la Consola de Audio</span>
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" class="btn-arrow-down">
+                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                    </svg>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ====================================================================
+         SECCIÓN 3: APLICACIÓN INTERACTIVA JUKEBOX (Simulación 3D)
+         ==================================================================== -->
+    <section id="jukebox-section" class="full-screen" aria-label="Aplicación Interactiva de Sonificación Earth Jukebox">
+        
+        <!-- Vista 3D Principal (Simulación de Globo con Raycasting Three.js) -->
+        <div id="view-3d" class="view-container">
+            <canvas id="sonification-canvas"></canvas>
+        </div>
+
+        <!-- PANELES FLOTANTES (GLASSMORPHISM CON MORADO PROFUNDO Y CIAN) -->
+
+        <!-- 1. Header Superior Izquierdo -->
+        <header class="floating-panel top-left-header" role="banner">
+            <div class="brand-row">
+                <div class="earth-icon-glow">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="badge-tag">NASA SVS 5196</span>
+                    <h2 data-i18n="app_title">EARTH JUKEBOX</h2>
+                </div>
+            </div>
+            <p class="brand-sub" data-i18n="app_subtitle">Sonificación Global de Datos Atmosféricos</p>
+        </header>
+
+        <!-- 2. Indicador Flotante de Estado de Audio (Superior Derecho) -->
+        <nav class="floating-panel top-right-nav" aria-label="Estado de Audio">
+            <div class="audio-state-pill" id="audio-state-pill">
+                <span class="state-dot" id="state-dot"></span>
+                <span id="state-label" data-i18n="audio_disconnected">Audio Off</span>
+            </div>
+        </nav>
+
+        <!-- 3. Barra Flotante de Controles y Telemetría (Dock Izquierdo) -->
+        <section class="floating-panel floating-controls-dock" aria-label="Controles de Sonificación">
+            <div class="dock-actions">
+                <button id="start-audio" class="btn-dock btn-primary" aria-label="Activar motor Web Audio Tone.js">
+                    <span class="icon-svg">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                        </svg>
+                    </span>
+                    <span id="btn-audio-label" data-i18n="btn_audio_init">Iniciar Audio</span>
+                </button>
+
+                <button id="btn-scan-toggle" class="btn-dock btn-secondary" disabled aria-label="Iniciar o pausar escaneo continuo">
+                    <span class="icon-svg" id="scan-icon">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </span>
+                    <span id="btn-scan-label" data-i18n="btn_scan_start">Escanear</span>
+                </button>
+            </div>
+
+            <div class="dock-divider"></div>
+
+            <!-- Control de Velocidad (Reubicado y Rediseñado) -->
+            <div class="control-group" style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <!-- Se añade la clase 'control-label' para igualar el tamaño de fuente -->
+                    <label for="scan-speed" class="control-label" style="margin: 0; color: #00E5FF; font-weight: bold; text-transform: uppercase; font-family: monospace, sans-serif; letter-spacing: 1px;">VELOCIDAD:</label>
+                    <span id="speed-indicator" style="margin: 0; color: #00E5FF; font-weight: bold; font-family: monospace, sans-serif; letter-spacing: 1px;">3x</span>
+                </div>
+                <input type="range" id="scan-speed" min="1" max="6" value="3" step="1" aria-label="Velocidad de rotación" style="width: 100%; cursor: pointer;">
+            </div>
+
+            <!-- Menú Desplegable: Estilo Musical -->
+            <div class="dock-select-group">
+                <label for="music-style" class="control-label" data-i18n="music_style_label">Estilo Musical</label>
+                <select id="music-style" class="dock-select" aria-label="Estilo Musical">
+                    <option value="ambient" selected>Ambient Orbital</option>
+                    <option value="synthwave">Synthwave Electrónico</option>
+                    <option value="piano">Piano Acústico</option>
+                </select>
+            </div>
+
+            <!-- Menú Desplegable: Escala Musical -->
+            <div class="dock-select-group">
+                <label for="music-scale" class="control-label" data-i18n="music_scale_label">Escala Musical</label>
+                <select id="music-scale" class="dock-select" aria-label="Escala Musical">
+                    <option value="major_pentatonic" selected>Pentatónica Mayor</option>
+                    <option value="harmonic_minor">Menor Armónica</option>
+                    <option value="lydian">Lidia</option>
+                </select>
+            </div>
+
+            <!-- Control de Tipo de Pincel Térmico -->
+            <div id="brush-controls" class="dock-select-group">
+                <label for="brush-type" class="control-label" data-i18n="brush_type_label">Pincel Térmico:</label>
+                <select id="brush-type" class="dock-select" aria-label="Pincel Térmico">
+                    <option value="blue">Azul (Muy Frío)</option>
+                    <option value="green">Verde (Fresco)</option>
+                    <option value="yellow" selected>Amarillo (Cálido)</option>
+                    <option value="orange">Naranja (Caliente)</option>
+                    <option value="red">Rojo (Extremo)</option>
+                </select>
+            </div>
+
+            <!-- Control de Tamaño de Pincel -->
+            <div id="brush-size-group" class="dock-select-group">
+                <div class="brush-size-header">
+                    <label for="brush-size" class="control-label" data-i18n="brush_size_label">Tamaño del Pincel:</label>
+                    <span id="brush-size-val" class="dock-val">20px</span>
+                </div>
+                <input type="range" id="brush-size" min="5" max="100" value="20" step="1" aria-label="Tamaño del pincel térmico">
+            </div>
+
+            <!-- Botón Destacado de Grabación: Borde cian (#00E5FF) y fondo morado (#6B46C1) -->
+            <div class="dock-record-row">
+                <button id="record-btn" class="btn-record-custom" aria-label="Grabar audio generado">
+                    🔴 Grabar Audio
+                </button>
+            </div>
+
+            <div class="dock-divider"></div>
+
+            <div class="dock-telemetry">
+                <div class="telem-row">
+                    <span class="telem-lbl" data-i18n="hud_x">COORD / POS</span>
+                    <span class="telem-val" id="hud-x">--</span>
+                </div>
+                <div class="telem-row">
+                    <span class="telem-lbl" data-i18n="hud_lum">COLOR RGB</span>
+                    <span class="telem-val" id="hud-lum">--</span>
+                </div>
+                <div class="telem-row">
+                    <span class="telem-lbl" data-i18n="hud_pan">PAN / SEC</span>
+                    <span class="telem-val" id="hud-pan">--</span>
+                </div>
+                <div class="telem-row highlight">
+                    <span class="telem-lbl" data-i18n="hud_note">NOTA</span>
+                    <span class="telem-val" id="hud-note">--</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Panel Flotante de Accesibilidad Sonora (ARIA-LIVE) -->
+        <aside class="floating-panel accessibility-dock" aria-label="Narrador de Accesibilidad">
+            <div class="access-pill-header">
+                <span class="access-dot-radar" id="access-dot"></span>
+                <span class="access-title" data-i18n="access_title">NARRACIÓN ACCESIBLE (ARIA-LIVE)</span>
+            </div>
+            <div id="narrator-box" class="access-speech" aria-live="polite" aria-atomic="true">
+                <p id="narrator-text" data-i18n="narrator_default">Pulsa 'Iniciar Audio' y haz clic en el globo para pintar temperatura y generar sonido.</p>
+            </div>
+        </aside>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- NUEVA SECCIÓN: ARCHIVO HISTÓRICO ECCO2 -->
+    <!-- ========================================== -->
+    <section id="historical-archive" style="margin-top: 60px; padding-top: 40px; border-top: 2px solid #27465f; width: 100%; max-width: 1000px; margin-left: auto; margin-right: auto; padding-left: 20px; padding-right: 20px;">
+        <h2 style="color: #00E5FF; font-family: monospace, sans-serif; text-transform: uppercase; font-size: 1.5rem; margin-bottom: 8px;">Archivo ECCO2: Sonificación Histórica</h2>
+        <p style="color: #A0AEC0; font-size: 0.9rem; margin-bottom: 24px;">
+            Escucha las estaciones del océano (2007-2008). El Hemisferio Norte suena en el oído izquierdo y el Sur en el derecho. Audio sintetizado desde video.
+        </p>
+
+        <!-- Contenedor del Video -->
+        <div style="border: 2px solid #00E5FF; border-radius: 8px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);">
+            <video id="v-ecco2" controls loop muted playsinline style="width: 100%; display: block; background: #000;">
+                <source src="assets/ecco2_sst_flow.webmhd.webm" type="video/webm">
+            </video>
+        </div>
+
+        <!-- Controles de Audio ECCO2 -->
+        <div class="control-group" style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap; margin-bottom: 24px;">
+            <button id="btn-ecco2" style="background: transparent; color: #00E5FF; border: 2px solid #00E5FF; padding: 10px 20px; font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase; font-family: monospace, sans-serif; transition: all 0.3s;">
+                Habilitar Sonido
+            </button>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <label for="vol-ecco2" class="control-label" style="color: #00E5FF; font-family: monospace, sans-serif; margin: 0;">VOLUMEN:</label>
+                <input id="vol-ecco2" type="range" min="0" max="1" step="0.05" value="0.7" style="cursor: pointer;">
+            </div>
+            <span id="modo-ecco2" style="color: #facc15; font-family: monospace, sans-serif; font-size: 0.85rem;">Cargando data.json...</span>
+        </div>
+
+        <!-- Termómetro visual -->
+        <div style="position: relative; height: 16px; border-radius: 8px; margin: 30px 0 20px 0; background: linear-gradient(90deg, #0096ff 0%, #00ff64 47%, #ffc800 78%, #ff0000 100%);">
+            <div id="mN-ecco2" style="position: absolute; width: 4px; height: 28px; top: -6px; background: #fff; border-radius: 2px; transition: left 0.15s; left: 50%; box-shadow: 0 0 5px rgba(0,0,0,0.8);"></div>
+            <div id="mS-ecco2" style="position: absolute; width: 4px; height: 28px; top: -6px; background: #111; border: 1px solid #00E5FF; border-radius: 2px; transition: left 0.15s; left: 50%;"></div>
+        </div>
+
+        <!-- Dashboard / Telemetría -->
+        <div style="background: rgba(13, 34, 56, 0.6); border: 1px solid #27465f; border-radius: 8px; padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px;">
+            <div>
+                <div style="color: #A0AEC0; font-size: 0.75rem; text-transform: uppercase;">Norte (Izq)</div>
+                <div style="color: #fff; font-size: 1.8rem; font-weight: bold; font-family: monospace;"><span id="tN-ecco2">--</span>°</div>
+                <div style="color: #00E5FF; font-family: monospace; font-size: 0.9rem;">Nota: <b id="nN-ecco2">--</b></div>
+            </div>
+            <div>
+                <div style="color: #A0AEC0; font-size: 0.75rem; text-transform: uppercase;">Sur (Der)</div>
+                <div style="color: #fff; font-size: 1.8rem; font-weight: bold; font-family: monospace;"><span id="tS-ecco2">--</span>°</div>
+                <div style="color: #00E5FF; font-family: monospace; font-size: 0.9rem;">Nota: <b id="nS-ecco2">--</b></div>
+            </div>
+            <div>
+                <div style="color: #A0AEC0; font-size: 0.75rem; text-transform: uppercase;">Área Cálida</div>
+                <div style="color: #ff3200; font-size: 1.2rem; font-weight: bold; text-transform: uppercase; margin-top: 5px;" id="pulso-ecco2">--</div>
+            </div>
+            <div>
+                <div style="color: #A0AEC0; font-size: 0.75rem; text-transform: uppercase;">Fecha Escaneo</div>
+                <div style="color: #fff; font-size: 1rem; font-family: monospace; margin-top: 5px;" id="fecha-ecco2">--</div>
+            </div>
+        </div>
+
+        <!-- Leyenda y Explicación -->
+        <div style="display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 30px;">
+            
+            <!-- Leyenda -->
+            <div style="background: rgba(13, 34, 56, 0.6); border: 1px solid #27465f; border-radius: 8px; padding: 20px;">
+                <h3 style="color: #00E5FF; font-family: monospace, sans-serif; text-transform: uppercase; font-size: 1.1rem; margin-top: 0;" data-i18n="ecco2_legend_title">Leyenda: Qué Significa Cada Sonido</h3>
+                <p style="color: #A0AEC0; font-size: 0.9rem;" data-i18n="ecco2_legend_desc">Haz clic para escuchar la escala. Las notas se distribuyen entre los momentos más fríos y cálidos del año.</p>
+                
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin: 15px 0;">
+                    <button type="button" class="btn-leg-ecco2" data-k="0" style="background: transparent; color: #00E5FF; border: 1px solid #00E5FF; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-family: monospace, sans-serif;" data-i18n="ecco2_btn_low">Nota baja: más frío</button>
+                    <button type="button" class="btn-leg-ecco2" data-k="0.5" style="background: transparent; color: #00E5FF; border: 1px solid #00E5FF; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-family: monospace, sans-serif;" data-i18n="ecco2_btn_mid">Nota media</button>
+                    <button type="button" class="btn-leg-ecco2" data-k="1" style="background: transparent; color: #00E5FF; border: 1px solid #00E5FF; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-family: monospace, sans-serif;" data-i18n="ecco2_btn_high">Nota alta: más cálido</button>
+                </div>
+                <p style="color: #A0AEC0; font-size: 0.85rem; margin-bottom: 0;" data-i18n="ecco2_legend_pulse">El pulso grave es más rápido cuando hay más agua a 25 °C o más.</p>
+            </div>
+
+            <!-- Cómo funciona -->
+            <details style="background: rgba(13, 34, 56, 0.6); border: 1px solid #27465f; border-radius: 8px; padding: 20px;" open>
+                <summary style="color: #00E5FF; font-family: monospace, sans-serif; text-transform: uppercase; font-size: 1.1rem; cursor: pointer; font-weight: bold;" data-i18n="ecco2_how_title">Cómo se convierte la imagen a sonido</summary>
+                <div style="color: #A0AEC0; font-size: 0.9rem; margin-top: 15px; line-height: 1.6;">
+                    <p data-i18n="ecco2_how_1">1. En cada fotograma, se ignoran la tierra, el fondo y las líneas blancas.</p>
+                    <p data-i18n="ecco2_how_2">2. El color de cada píxel se convierte a temperatura usando la barra de la NASA (azul 0 °C, verde 10 a 20 °C, amarillo ~25 °C, rojo 32 °C).</p>
+                    <p data-i18n="ecco2_how_3">3. El promedio de las mitades norte y sur del mapa se calcula por separado.</p>
+                    <p data-i18n="ecco2_how_4">4. Cada promedio se distribuye entre 13 notas de una escala pentatónica.</p>
+                    <p data-i18n="ecco2_how_5">5. El porcentaje de agua a 25 °C o más controla la velocidad del pulso.</p>
+                    <p><b style="color: #00E5FF;" data-i18n="ecco2_how_adj_title">Escala ajustada:</b> <span data-i18n="ecco2_how_adj_desc">La temperatura promedio de un hemisferio cambia solo unos grados al año. Para hacer la diferencia audible, las notas se distribuyen entre los valores mínimo y máximo del video. Los grados mostrados son los valores reales estimados.</span></p>
+                </div>
+            </details>
+        </div>
+    </section>
+
+    <!-- Script Principal -->
+    <script src="app.js"></script>
+</body>
+</html>
